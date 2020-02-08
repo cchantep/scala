@@ -39,6 +39,28 @@ class TryTest {
     assertEquals(Failure(e), Try[Int] { throw e })
   }
 
+  @Test def contains(): Unit = {
+    assertTrue(Success(1) contains 1)
+    assertFalse(Success(2) contains 1)
+    assertFalse(Failure(new Exception) contains 1)
+  }
+
+  @Test def exists(): Unit = {
+    assertTrue(Success(1).exists(_ > 0))
+    assertFalse(Success(2).exists(_ < 1))
+
+    assertFalse(Failure(new Exception).exists(_ => true))
+    assertFalse(Failure(new Exception).exists(_ => false))
+  }
+
+  @Test def forall(): Unit = {
+    assertTrue(Success(1).forall(_ > 0))
+    assertFalse(Success(2).forall(_ < 1))
+
+    assertTrue(Failure(new Exception).forall(_ => true))
+    assertTrue(Failure(new Exception).forall(_ => false))
+  }
+
   @Test def recoverWith(): Unit = {
     assertEquals(Success(1), Success(1).recoverWith { case _ => Success(2) })
     assertEquals(Success(2), Failure(e).recoverWith { case _ => Success(2) })
